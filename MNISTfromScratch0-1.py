@@ -27,42 +27,9 @@ import math
 import matplotlib.cm as cm 
 import matplotlib.pyplot as plt
 import os
-print(os.listdir("../input"))
 
-train_data = pd.read_csv("../input/train.csv")
-test_data= pd.read_csv("../input/test.csv")
-#separating labels and pixels
-train_labels=np.array(train_data.loc[:,'label'])
-train_data=np.array(train_data.loc[:,train_data.columns!='label'])
-#train_data=train_data/train_data.max()
 
-#Visualize the input data. Change the index value to visualize the particular index data.
-index=7;
-plt.title((train_labels[index]))
-plt.imshow(train_data[index].reshape(28,28), cmap=cm.binary)
 
-print("train data")
-y_value=np.zeros((1,10))
-for i in range (10):
-    print("occurance of ",i,"=",np.count_nonzero(train_labels==i))
-    y_value[0,i-1]= np.count_nonzero(train_labels==i)
-
-y_value=y_value.ravel()
-x_value=[0,1,2,3,4,5,6,7,8,9]
-plt.xlabel('label')
-plt.ylabel('count')
-plt.bar(x_value,y_value,0.7,color='g')
-
-#converting train_label in one hot encoder representation 
-train_data=np.reshape(train_data,[784,42000])
-train_label=np.zeros((10,42000))
-for col in range (42000):
-    val=train_labels[col]
-    for row in range (10):
-        if (val==row):
-            train_label[val,col]=1
-print("train_data shape="+str(np.shape(train_data)))
-print("train_label shape="+str(np.shape(train_label)))
 
 #activation functions sigmoid relu and softmax
 def sigmoid(Z):
@@ -230,11 +197,6 @@ def plot_graph(cost_plot):
     plt.ylabel('cost')
     plt.plot(x_value,cost_plot,0.,color='g')
     
-    
-#defining structure of neural network
-layers_dims = [784,500,400,300,100,10] #  n-layer model (n=6 including input and output layer)
-len_update=len(layers_dims)    
-
 #function to call sub_functions
 def L_layer_model(X, Y, layers_dims, learning_rate , num_iterations , print_cost=False):#lr was 0.009
     print("training...")
@@ -249,7 +211,51 @@ def L_layer_model(X, Y, layers_dims, learning_rate , num_iterations , print_cost
         cost_plot[i]=cost;
     
     plot_graph(cost_plot)
-    return parameters
+    return parameters    
+
+
+
+#-----------------MAIN---------------------------
+
+train_data = pd.read_csv('train.csv')
+test_data= pd.read_csv('test.csv')
+#separating labels and pixels
+train_labels=np.array(train_data.loc[:,'label'])
+train_data=np.array(train_data.loc[:,train_data.columns!='label'])
+#train_data=train_data/train_data.max()
+
+#Visualize the input data. Change the index value to visualize the particular index data.
+index=7;
+plt.title((train_labels[index]))
+plt.imshow(train_data[index].reshape(28,28), cmap=cm.binary)
+
+print("train data")
+y_value=np.zeros((1,10))
+for i in range (10):
+    print("occurance of ",i,"=",np.count_nonzero(train_labels==i))
+    y_value[0,i-1]= np.count_nonzero(train_labels==i)
+
+y_value=y_value.ravel()
+x_value=[0,1,2,3,4,5,6,7,8,9]
+plt.xlabel('label')
+plt.ylabel('count')
+plt.bar(x_value,y_value,0.7,color='g')
+
+#converting train_label in one hot encoder representation 
+train_data=np.reshape(train_data,[784,42000])
+train_label=np.zeros((10,42000))
+for col in range (42000):
+    val=train_labels[col]
+    for row in range (10):
+        if (val==row):
+            train_label[val,col]=1
+print("train_data shape="+str(np.shape(train_data)))
+print("train_label shape="+str(np.shape(train_label)))
+
+
+#defining structure of neural network
+layers_dims = [784,500,400,300,100,10] #  n-layer model (n=6 including input and output layer)
+len_update=len(layers_dims)    
 
 #variable parameter in network learning_rate, iterationd 
 parameters = L_layer_model(train_data, train_label, layers_dims,learning_rate = 0.0005, num_iterations =35 , print_cost = True) 
